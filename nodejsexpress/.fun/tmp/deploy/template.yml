@@ -1,0 +1,34 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  CustomContainerDemo:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Role: >-
+        acs:ram::1986114430573743:role/aliyunfcgeneratedrole-cn-shenzhen-customcontainerdemo
+      InternetAccess: true
+    nodejs-express-http:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Description: HTTP function powered by nodejs express
+        Handler: not-used
+        Runtime: custom-container
+        Timeout: 60
+        MemorySize: 1024
+        InstanceConcurrency: 1
+        EnvironmentVariables:
+          LD_LIBRARY_PATH: >-
+            /code/.fun/root/usr/local/lib:/code/.fun/root/usr/lib:/code/.fun/root/usr/lib/x86_64-linux-gnu:/code/.fun/root/usr/lib64:/code/.fun/root/lib:/code/.fun/root/lib/x86_64-linux-gnu:/code/.fun/root/python/lib/python2.7/site-packages:/code/.fun/root/python/lib/python3.6/site-packages:/code:/code/lib:/usr/local/lib
+          NODE_PATH: '/code/node_modules:/usr/local/lib/node_modules'
+          PATH: >-
+            /code/.fun/root/usr/local/bin:/code/.fun/root/usr/local/sbin:/code/.fun/root/usr/bin:/code/.fun/root/usr/sbin:/code/.fun/root/sbin:/code/.fun/root/bin:/code:/code/node_modules/.bin:/code/.fun/python/bin:/code/.fun/node_modules/.bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:/bin
+          PYTHONUSERBASE: /code/.fun/python
+      Events:
+        http-trigger-test:
+          Type: HTTP
+          Properties:
+            AuthType: anonymous
+            Methods:
+              - GET
+              - POST
+              - PUT
