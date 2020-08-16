@@ -16,8 +16,9 @@ Resources:
         CAPort: 8080
         Handler: not-used
         MemorySize: 1024
+        CodeUri: ./        # Root directory for the function or the Dockerfile path
         CustomContainerConfig:
-          Image: 'registry.cn-shenzhen.aliyuncs.com/fc-demo/nodejs-express:v0.2'
+          Image: 'registry-vpc.cn-shenzhen.aliyuncs.com/fc-demo/nodejs-express:v0.2'
           Command: '[ "node"]'
           Args: '["server.js"]'
       Events:
