@@ -17,6 +17,9 @@ app.post('/invoke', (req, res) => {
   res.send('Hello FunctionCompute, event function\n');
 });
 
-app.listen(PORT, HOST);
+var server = app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
+
+server.timeout = 0; // never timeout
+server.keepAliveTimeout = 0; // keepalive, never timeout
 
