@@ -1,23 +1,8 @@
 # Running custom containers on Function Compute
 
-## Option 1: Build and deploy using Funcraft
-* Note: Replace `YOUR_ACR_IMAGE` in template.yml
+Alibaba Cloud FunctionCompute supports deploying functions with code zip packages as well as container images. This feature is provided as a runtime named [custom-container](https://www.alibabacloud.com/help/doc-detail/179368.htm).
+This repo demonstrates deploying Alibaba Cloud FunctionCompute (FC) with custom-container runtime for different programming languages and frameworks:
 
-```bash
-# Build the Docker image
-fun build --use-docker
+* [Nodejs Express README](nodejs-express/README.md)
+* [Java SpringBoot README](java-springboot/README.md)
 
-# Deploy the function, push the image via the internet registry host (the function config uses the VPC registry for faster image pulling)
-fun deploy --push-registry acr-internet
-```
-
-## Option 2: Build and push using Docker only
-
-```bash
-export IMAGE_NAME="your ACR image name"  # e.g. registry.cn-shenzhen.aliyuncs.com/fc-demo/nodejs-express:v0.2
-docker build -t $IMAGE_NAME .
-docker push $IMAGE_NAME
-
-# Deploy the function without pushing the image to ACR
-fun deploy
-```
