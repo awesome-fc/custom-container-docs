@@ -18,7 +18,8 @@ Resources:
         MemorySize: 1024
         CodeUri: ./        # Root directory for the function or the Dockerfile path
         CustomContainerConfig:
-          Image: 'registry-vpc.cn-shenzhen.aliyuncs.com/fc-demo/nodejs-express:v0.2'
+          # Sample image value: registry-vpc.cn-shenzhen.aliyuncs.com/fc-demo/nodejs-express:v0.1
+          Image: '{FC_DEMO_IMAGE}'
           Command: '[ "node"]'
           Args: '["server.js"]'
       Events:
