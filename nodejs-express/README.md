@@ -3,7 +3,10 @@
 ## Option 1: Build and push using Docker only
 
 ```bash
-export FC_DEMO_IMAGE="your ACR image name"  # e.g. registry.cn-shenzhen.aliyuncs.com/fc-demo/nodejs-express:v0.2
+git clone https://github.com/awesome-fc/custom-container-docs.git
+cd custom-container-docs/nodejs-express
+
+export FC_DEMO_IMAGE="your ACR image name"  # e.g. registry.cn-shenzhen.aliyuncs.com/{your-namespace}/nodejs-express:v1
 docker build -t $FC_DEMO_IMAGE .
 
 # Docker login before pushing, replace {your-ACR-registry}, e.g. registry.cn-shenzhen.aliyuncs.com
@@ -19,9 +22,9 @@ fun deploy
 
 ```bash
 git clone https://github.com/awesome-fc/custom-container-docs.git
-cd nodejs-express
+cd custom-container-docs/nodejs-express
 
-# Set FC_DEMO_IMAGE to your ACR image, e.g. registry-vpc.cn-shenzhen.aliyuncs.com/{your-namespace}/fc-demo-java-spring-boot:v1
+# Set FC_DEMO_IMAGE to your ACR image, e.g. registry-vpc.cn-shenzhen.aliyuncs.com/{your-namespace}/nodejs-express:v1
 export FC_DEMO_IMAGE={your_image}
 
 # Substitute {FC_DEMO_IMAGE} in template.yml

@@ -8,7 +8,7 @@ There are two functions to be built and deployed in this demo, one of them is an
 
 ```bash
 git clone https://github.com/awesome-fc/custom-container-docs.git
-cd java-springboot
+cd custom-container-docs/java-springboot
 
 export FC_DEMO_IMAGE={your_image}
 docker build -t $FC_DEMO_IMAGE .
@@ -30,6 +30,9 @@ fun deploy
 ### Option 2 (Recommended): build and deploy using Funcraft
 
 ```bash
+git clone https://github.com/awesome-fc/custom-container-docs.git
+cd custom-container-docs/java-springboot
+
 # Set FC_DEMO_IMAGE to your ACR image, e.g. registry-vpc.cn-shenzhen.aliyuncs.com/{your-namespace}/fc-demo-java-spring-boot:v1
 export FC_DEMO_IMAGE={your_image}
 
