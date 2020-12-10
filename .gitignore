@@ -1,5 +1,6 @@
 .DS_Store
 nodejs-express/.fun/*
+python-flask/.fun/*
 java-springboot/.fun/*
 java-springboot/target/*
 java-springboot/*.iml
