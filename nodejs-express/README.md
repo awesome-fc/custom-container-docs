@@ -1,4 +1,10 @@
 # Running custom containers on Function Compute
+Clone the repo to local workspace
+
+```bash
+git clone https://github.com/awesome-fc/custom-container-docs.git
+cd custom-container-docs/nodejs-express
+```
 
 ## Option 1: Build and push using Docker only
 
@@ -18,9 +24,6 @@ fun deploy
 ## Option 2 (Recommended): Build and deploy using Funcraft
 
 ```bash
-git clone https://github.com/awesome-fc/custom-container-docs.git
-cd nodejs-express
-
 # Set FC_DEMO_IMAGE to your ACR image, e.g. registry-vpc.cn-shenzhen.aliyuncs.com/{your-namespace}/fc-demo-java-spring-boot:v1
 export FC_DEMO_IMAGE={your_image}
 
