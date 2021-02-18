@@ -6,4 +6,5 @@ This repo demonstrates deploying Alibaba Cloud FunctionCompute (FC) with custom-
 * [Java SpringBoot](java-springboot/)
 * [Nodejs Express](nodejs-express/)
 * [Python Flask](python-flask/)
-
+* [Tensorflow Serving](tensorflow-serving/)
+* [Nodejs Express Puppeteer PDF](puppeteer-pdf/)

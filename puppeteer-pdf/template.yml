@@ -1,0 +1,49 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  CustomContainerDemo:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Policies:
+        - AliyunContainerRegistryReadOnlyAccess
+      InternetAccess: true
+    puppeteer-pdf-accl:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Description: 'HTTP function powered by custom-container and Puppeteer web page PDF printer with image acceleration'
+        Runtime: custom-container
+        Timeout: 60
+        CAPort: 3000
+        Handler: not-used
+        MemorySize: 3072
+        CodeUri: ./             # Root directory for the function or the Dockerfile path
+        CustomContainerConfig:
+          # Sample image value: registry-vpc.cn-beijing.aliyuncs.com/fc-demo/puppeteer-pdf:v1
+          Image: '{FC_DEMO_IMAGE}'
+          AccelerationType: Default # Image acceleration is enabled
+      Events:
+        http-trigger:
+          Type: HTTP
+          Properties:
+              AuthType: ANONYMOUS
+              Methods: ['GET', 'POST']
+    puppeteer-pdf-no-accl:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Description: 'HTTP function powered by custom-container and Puppeteer web page PDF printer without image acceleration'
+        Runtime: custom-container
+        Timeout: 60
+        CAPort: 3000
+        Handler: not-used
+        MemorySize: 3072
+        CodeUri: ./             # Root directory for the function or the Dockerfile path
+        CustomContainerConfig:
+          # Sample image value: registry-vpc.cn-beijing.aliyuncs.com/fc-demo/puppeteer-pdf:v1
+          Image: '{FC_DEMO_IMAGE}'
+          AccelerationType: None # Image acceleration is disabled
+      Events:
+        http-trigger:
+          Type: HTTP
+          Properties:
+              AuthType: ANONYMOUS
+              Methods: ['GET', 'POST']

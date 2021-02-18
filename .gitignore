@@ -5,3 +5,5 @@ java-springboot/.fun/*
 java-springboot/target/*
 java-springboot/*.iml
 java-springboot/src/main/main.iml
+puppeteer-pdf/.fun/*
+tensorflow-serving/.fun/*

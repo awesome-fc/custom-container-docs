@@ -1,12 +1,14 @@
 ## Python Flask running on FC with custom-container runtime
 There are two functions to be built and deployed in this demo, one of them is an `Event function` and the other is a `HTTP function`. Please see the source code and comments for more details.
 
+```bash
+git clone https://github.com/awesome-fc/custom-container-docs.git
+cd custom-container-docs/python-flask
+```
+
 ### Option 1: Build and push using Docker only
 
 ```bash
-git clone https://github.com/awesome-fc/custom-container-docs.git
-cd python-flask
-
 # Set FC_DEMO_IMAGE to your ACR image, e.g. registry.cn-shenzhen.aliyuncs.com/{your-namespace}/fc-demo-python-flask:v1
 export FC_DEMO_IMAGE={your_image}
 docker build -t $FC_DEMO_IMAGE .

@@ -4,12 +4,14 @@ This demo is based on the [official document](https://spring.io/guides/gs/spring
 ## Build and deploy custom-container functions
 There are two functions to be built and deployed in this demo, one of them is an `Event function` and the other is a `HTTP function`. Please see the source code and comments for more details.
 
+```bash
+git clone https://github.com/awesome-fc/custom-container-docs.git
+cd custom-container-docs/java-springboot
+```
+
 ### Option 1: Build and push using Docker only
 
 ```bash
-git clone https://github.com/awesome-fc/custom-container-docs.git
-cd java-springboot
-
 export FC_DEMO_IMAGE={your_image}
 docker build -t $FC_DEMO_IMAGE .
 
