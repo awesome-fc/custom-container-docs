@@ -7,3 +7,4 @@ java-springboot/*.iml
 java-springboot/src/main/main.iml
 puppeteer-pdf/.fun/*
 tensorflow-serving/.fun/*
+go-gin/.fun/*
