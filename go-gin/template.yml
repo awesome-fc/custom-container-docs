@@ -1,0 +1,41 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  GoGinCustomContainer:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Policies:
+        - AliyunContainerRegistryReadOnlyAccess
+      InternetAccess: true
+    go-gin-event:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Description: 'FC event function powered by custom-container and Go Gin'
+        Runtime: custom-container
+        Timeout: 60
+        CAPort: 9000
+        Handler: not-used
+        MemorySize: 1024
+        CodeUri: ./        # Root directory for the function or the Dockerfile path
+        CustomContainerConfig:
+          # Sample image value: registry-vpc.cn-shanghai.aliyuncs.com/fnf-fc-demo/go-gin:v1
+          Image: '{FC_DEMO_IMAGE}'
+    go-gin-http:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Description: 'HTTP function powered by custom-container and Go Gin'
+        Runtime: custom-container
+        Timeout: 60
+        CAPort: 9000
+        Handler: not-used
+        MemorySize: 1024
+        CodeUri: ./        # Root directory for the function or the Dockerfile path
+        CustomContainerConfig:
+          # Sample image value: registry-vpc.cn-shanghai.aliyuncs.com/fnf-fc-demo/go-gin:v1
+          Image: '{FC_DEMO_IMAGE}'
+      Events:
+        http-trigger-test:
+          Type: HTTP
+          Properties:
+              AuthType: ANONYMOUS
+              Methods: ['GET', 'POST']
