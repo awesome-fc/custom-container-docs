@@ -7,31 +7,31 @@ Resources:
       Policies:
         - AliyunContainerRegistryReadOnlyAccess
       InternetAccess: true
-    php-laravel-event:
+    php-laravel-nginx-event:
       Type: 'Aliyun::Serverless::Function'
       Properties:
-        Description: 'FC event function powered by custom-container and PHP Laravel'
+        Description: 'FC event function powered by custom-container, NGINX, PHP-FPM, and Laravel.'
         Runtime: custom-container
         Timeout: 60
-        CAPort: 9000
+        CAPort: 8080
         Handler: not-used
         MemorySize: 1024
-        CodeUri: ./        # Root directory for the function or the Dockerfile path
+        CodeUri: ./nginx/        # Root directory for the function or the Dockerfile path
         CustomContainerConfig:
-          # Sample image value: registry-vpc.cn-shanghai.aliyuncs.com/fnf-fc-demo/php-laravel:v1
+          # Sample image value: registry.cn-shanghai.aliyuncs.com/fnf-fc-demo/php-laravel:nginx-v1
           Image: '{FC_DEMO_IMAGE}'
-    php-laravel-http:
+    php-laravel-nginx-http:
       Type: 'Aliyun::Serverless::Function'
       Properties:
         Description: 'HTTP function powered by custom-container and PHP Laravel'
         Runtime: custom-container
         Timeout: 60
-        CAPort: 9000
+        CAPort: 8080
         Handler: not-used
         MemorySize: 1024
-        CodeUri: ./        # Root directory for the function or the Dockerfile path
+        CodeUri: ./nginx/        # Root directory for the function or the Dockerfile path
         CustomContainerConfig:
-          # Sample image value: registry-vpc.cn-shanghai.aliyuncs.com/fnf-fc-demo/php-laravel:v1
+          # Sample image value: registry.cn-shanghai.aliyuncs.com/fnf-fc-demo/php-laravel:nginx-v1
           Image: '{FC_DEMO_IMAGE}'
       Events:
         defaultTrigger:

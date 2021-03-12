@@ -6,4 +6,4 @@ then
   exit 1
 fi
 
-perl -i -p -e 's/{FC_DEMO_IMAGE}/$ENV{"FC_DEMO_IMAGE"}/g' ./template.yml
+perl -i -p -e 's/{FC_DEMO_IMAGE}/$ENV{"FC_DEMO_IMAGE"}/g' "$FC_DEMO_TEMPLATE"

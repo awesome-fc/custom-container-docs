@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/2016-08-15/proxy/CustomContainerDemo/php-laravel-http', function () {
-    return 'Hello FunctionCompute, http function\n';
+Route::get('/', function(Request $request) {
+    $requestId = $request -> header('x-fc-request-id');
+    return 'Hello FunctionCompute, http function. RequestId: ' . $requestId;
 });
 
 Route::post('/invoke', function () {
