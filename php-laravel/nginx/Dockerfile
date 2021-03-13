@@ -23,9 +23,11 @@ COPY ./web.php /var/www/project/routes/
 COPY ./VerifyCsrfToken.php /var/www/project/app/Http/Middleware/
 
 # Install project dependencies
+COPY ./nginx/composer.json var/www/project/
 RUN composer install
 
 # Start NGINX server and PHP-FPM
+COPY ./nginx/custom-php-fpm.conf /etc/php/7.4/fpm/pool.d/custom-php-fpm.conf/
 ENTRYPOINT ["/etc/entrypoint.sh"]
 
 # Open port used for request input

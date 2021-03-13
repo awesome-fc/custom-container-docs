@@ -1,0 +1,5 @@
+{
+    "require": {
+        "ifsnop/mysqldump-php": "v2.9"
+    }
+}
