@@ -27,7 +27,7 @@ COPY ./nginx/composer.json var/www/project/
 RUN composer install
 
 # Start NGINX server and PHP-FPM
-COPY ./nginx/custom-php-fpm.conf /etc/php/7.4/fpm/pool.d/custom-php-fpm.conf/
+COPY ./nginx/custom-php-fpm.conf /etc/php/7.4/fpm/pool.d/
 ENTRYPOINT ["/etc/entrypoint.sh"]
 
 # Open port used for request input
