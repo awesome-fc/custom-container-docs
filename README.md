@@ -9,3 +9,4 @@ This repo demonstrates deploying Alibaba Cloud FunctionCompute (FC) with custom-
 * [Tensorflow Serving](tensorflow-serving/)
 * [Nodejs Express Puppeteer PDF](puppeteer-pdf/)
 * [Go GIN](go-gin/)
+* [PHP Laravel](php-laravel/)
