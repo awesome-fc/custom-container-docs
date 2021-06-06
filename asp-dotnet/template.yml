@@ -1,0 +1,28 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  DotNetCustomContainer:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Policies:
+        - AliyunContainerRegistryReadOnlyAccess
+      InternetAccess: true
+    weather-forecast:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Description: 'HTTP weather forecast function powered by custom-container and .NET'
+        Runtime: custom-container
+        Timeout: 60
+        CAPort: 80
+        Handler: not-used
+        MemorySize: 1024
+        CodeUri: ./        # Root directory for the function or the Dockerfile path
+        CustomContainerConfig:
+          # Sample image value: registry-vpc.cn-shanghai.aliyuncs.com/namespace/dotnet:v1
+          Image: 'registry.cn-shanghai.aliyuncs.com/fnf-fc-demo/dotnet:v1'
+      Events:
+        http-trigger-test:
+          Type: HTTP
+          Properties:
+              AuthType: ANONYMOUS
+              Methods: ['GET', 'POST']
