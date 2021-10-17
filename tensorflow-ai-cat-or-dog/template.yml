@@ -1,0 +1,49 @@
+ROSTemplateFormatVersion: "2015-09-01"
+Transform: "Aliyun::Serverless-2018-04-03"
+Resources:
+  forrestCatDogClassifyModelProd:
+    Type: "Aliyun::Serverless::Service"
+    Properties:
+      Policies:
+        - AliyunContainerRegistryReadOnlyAccess
+        - AliyunOSSFullAccess
+      InternetAccess: true
+      LogConfig: Auto
+    model:
+      Type: "Aliyun::Serverless::Function"
+      Properties:
+        Description: "cat-dog-recognition example with custom container"
+        Runtime: custom-container
+        Handler: not-used-handler
+        Timeout: 60
+        CAPort: 9000
+        Initializer: not-used-init
+        InitializationTimeout: 300
+        MemorySize: 4096
+        CodeUri: ./ # Root directory for the function or the Dockerfile path
+        InstanceType: c1
+        InstanceConcurrency: 6
+        CustomContainerConfig:
+          Image: "registry.us-west-1.aliyuncs.com/fc-demo-1-3/forrest-ai-demo-model-deploy-prod:v1"
+          Command: ""
+          Args: ""
+        EnvironmentVariables:
+          OSS_BUCKET_NAME: forrest-cat-dog-recognition-app # replace your bucket
+          MODEL_OSS_BUCKET: ml-pipeline
+          MODEL_FILE_OSS_KEY: fnf_k8s_cat_dog_demo_trained_models/models-1609397751783.tar.gz
+      Events:
+        http-trigger:
+          Type: HTTP
+          Properties:
+            AuthType: ANONYMOUS
+            Methods: ["GET", "POST", "PUT", "DELETE", "HEAD"]
+  my_domain:
+    Type: "Aliyun::Serverless::CustomDomain"
+    Properties:
+      DomainName: forrester.ai.prod.functioncompute.com
+      Protocol: HTTP
+      RouteConfig:
+        Routes:
+          "/*":
+            ServiceName: forrestCatDogClassifyModelProd
+            FunctionName: model

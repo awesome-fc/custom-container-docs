@@ -1,0 +1,11 @@
+oss2==2.9.1
+Werkzeug==0.15
+Flask==1.1.1
+Flask-Bootstrap
+scikit-learn
+scikit-image
+h5py==2.10.0
+scipy==1.1.0
+keras==2.2.4
+tensorflow==1.13.1
+Pillow
