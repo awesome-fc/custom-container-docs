@@ -1,4 +1,5 @@
-FROM node:14.5.0-alpine3.11
+# Enforce the platform to AMD64 to prevent unsupported ARM64 images that generated on Macbook M1 chips
+FROM --platform=linux/amd64 node:14.5.0-alpine3.11
 
 # Create app directory
 WORKDIR /usr/src/app

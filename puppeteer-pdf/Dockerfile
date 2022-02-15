@@ -1,4 +1,5 @@
-FROM node:10.15
+# Enforce the platform to AMD64 to prevent unsupported ARM64 images that generated on Macbook M1 chips
+FROM --platform=linux/amd64 node:10.15
 
 RUN apt-get update && apt-get install -y wget --no-install-recommends \
   && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
