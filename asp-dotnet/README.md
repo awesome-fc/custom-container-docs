@@ -1,47 +1,72 @@
-# Running custom containers on Function Compute
-## - A weather forecast service
+# A weather forecast service running on FC with custom-container runtime
+
 ## Setup
-Clone the repo to local workspace
 
 ```bash
+# Clone this repo to local workspace
 git clone https://github.com/awesome-fc/custom-container-docs.git
 cd custom-container-docs/asp-dotnet
-```
 
-## Deploy Service
-### Option 1: Build and push using Docker
+# Set FC_DEMO_IMAGE to your desired ACR image name,
+# e.g., registry.cn-shanghai.aliyuncs.com/{your-namespace}/dotnet:v1
+export FC_DEMO_IMAGE={your_image_name}
 
-```bash
-export FC_DEMO_IMAGE="your ACR image name"  # e.g. registry.cn-shanghai.aliyuncs.com/namespace/dotnet:v1
+# Set FC_ACCOUNT to your Alibaba Cloud Account ID
+export FC_ACCOUNT={your_account_id}
+
+# Set region to the same as of your image, e.g., cn-shanghai
+export region={region}
+
+# Build image
 docker build -t $FC_DEMO_IMAGE .
 
-# Docker login before pushing, replace {your-ACR-registry}, e.g. registry.cn-shanghai.aliyuncs.com
-docker login {your-ACR-registry}
-
-docker push $FC_DEMO_IMAGE
-
-# Deploy the function without pushing the image to ACR
-fun deploy
-```
-
-### Option 2 (Recommended): Build and deploy only using Funcraft
-
-```bash
-# Set FC_DEMO_IMAGE to your ACR image, e.g. registry-vpc.cn-shanghai.aliyuncs.com/{your-namespace}/dotnet:v1
-export FC_DEMO_IMAGE={your_image}
-
-# Substitute {FC_DEMO_IMAGE} in template.yml
+# Substitute {FC_DEMO_IMAGE} and {FC_ACCOUNT} in s.yaml
 ./setup.sh
 
-# Build the Docker image
-fun build --use-docker
+# Before deploying, Docker login to your ACR registry, e.g., registry.cn-shanghai.aliyuncs.com
+docker login registry.${region}.aliyuncs.com
+```
 
-# Docker login before pushing, replace {your-ACR-registry}, e.g. registry.cn-shanghai.aliyuncs.com
-docker login {your-ACR-registry}
 
-# Deploy the function, push the image via the internet registry host (the function config uses the VPC registry for faster image pulling)
-fun deploy --push-registry acr-internet
+## Deploy
+### Option 1 (Recommended): Build and deploy only using Serverless Devs
 
-# After a successful deploy, fun should return a HTTP proxy URL to invoke WeatherForecast function
-curl https://{your-account-id}.{region}.fc.aliyuncs.com/WeatherForecast -H "x-fc-invocation-target: 2016-08-15/proxy/DotNetCustomContainer/weather-forecast"
+```bash
+# Deploying FC function automatically pushes image to your ACR repository
+s deploy
+```
+
+### Option 2: Push image to ACR before deploying
+
+```bash
+# Push to your ACR repository
+docker push $FC_DEMO_IMAGE
+
+# Deploy FC function
+s deploy --skip-push
+
+```
+
+## Before testing, wait until acceleration image is ready (Usually less than 1 min)
+
+```bash
+s cli fc-api getFunction --serviceName DotNetCustomContainer --functionName weather-forecast --region ${region}
+```
+
+### Expected response
+```yaml
+...
+CustomContainerConfig:
+    ...
+    # Make sure accelerationInfo.status is Ready
+    accelerationInfo:
+        status: Ready
+        ...
+```
+
+
+## Test
+
+```bash
+curl https://${FC_ACCOUNT}.${region}.fc.aliyuncs.com/WeatherForecast -H "x-fc-invocation-target: 2016-08-15/proxy/DotNetCustomContainer/weather-forecast"
 ```

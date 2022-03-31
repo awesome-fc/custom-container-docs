@@ -1,0 +1,26 @@
+edition: 1.0.0
+
+services:
+  PHPLaravelNginxCustomContainer:
+    component: fc
+    props:
+      region: cn-shanghai
+      service:
+        name: PHPLaravelNginxCustomContainer
+        role: acs:ram::{FC_ACCOUNT}:role/aliyunfcdefaultrole
+      function:
+        name: php-laravel-nginx
+        runtime: custom-container
+        timeout: 60
+        memorySize: 1024
+        caPort: 8080
+        customContainerConfig:
+          image: {FC_DEMO_IMAGE}
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST

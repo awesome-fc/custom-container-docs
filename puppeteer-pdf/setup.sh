@@ -6,4 +6,11 @@ then
   exit 1
 fi
 
-perl -i -p -e 's/{FC_DEMO_IMAGE}/$ENV{"FC_DEMO_IMAGE"}/g' ./template.yml
+if [ -z "$FC_ACCOUNT" ]
+then
+  echo "Argument account is required but not provided. Usage: $1 account ID;"
+  exit 1
+fi
+
+perl -i -p -e 's/{FC_DEMO_IMAGE}/$ENV{"FC_DEMO_IMAGE"}/g' s.yaml
+perl -i -p -e 's/{FC_ACCOUNT}/$ENV{"FC_ACCOUNT"}/g' s.yaml

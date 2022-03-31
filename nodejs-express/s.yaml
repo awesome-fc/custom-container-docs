@@ -1,0 +1,29 @@
+edition: 1.0.0
+
+services:
+  NodejsCustomContainer:
+    component: fc
+    props:
+      region: cn-shanghai
+      service:
+        name: NodejsCustomContainer
+        role: acs:ram::{FC_ACCOUNT}:role/aliyunfcdefaultrole
+      function:
+        name: nodejs
+        runtime: custom-container
+        timeout: 60
+        memorySize: 1024
+        caPort: 8080
+        customContainerConfig:
+          image: {FC_DEMO_IMAGE}
+          Command: '[ "node"]'
+          Args: '["server.js"]'
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+              - PUT

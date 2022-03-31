@@ -1,0 +1,26 @@
+edition: 1.0.0
+
+services:
+  GoGinCustomContainer:
+    component: fc
+    props:
+      region: cn-shanghai
+      service:
+        name: GoGinCustomContainer
+        role: acs:ram::{FC_ACCOUNT}:role/aliyunfcdefaultrole
+      function:
+        name: go-gin
+        runtime: custom-container
+        timeout: 60
+        memorySize: 1024
+        caPort: 9000
+        customContainerConfig:
+          image: {FC_DEMO_IMAGE}
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
