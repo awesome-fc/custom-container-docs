@@ -1,0 +1,26 @@
+edition: 1.0.0
+
+services:
+  PuppeteerPDFCustomContainer:
+    component: fc
+    props:
+      region: cn-shanghai
+      service:
+        name: PuppeteerPDFCustomContainer
+        role: acs:ram::{FC_ACCOUNT}:role/aliyunfcdefaultrole
+      function:
+        name: puppeteer-pdf
+        runtime: custom-container
+        timeout: 60
+        memorySize: 1024
+        caPort: 3000
+        customContainerConfig:
+          image: {FC_DEMO_IMAGE}
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST

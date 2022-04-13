@@ -1,65 +1,84 @@
-## Nodejs Express and Puppeteer to print web pages as PDFs, running on FC with custom-container runtime
-This example is based on [christopher-talke/node-express-puppeteer-pdf-example](https://github.com/christopher-talke/node-express-puppeteer-pdf-example) along with minor tweaks and Alibaba Cloud FunctionCompute deployment templates. This demo illustrates the image acceleration feature. It deploys the same image as two functions, one with acceleration enabled (`AccelerationType: Default`) and another disabled (`AccelerationType: None`).
+# Nodejs Express and Puppeteer to print web pages as PDFs, running on FC with custom-container runtime
+This example is based on [christopher-talke/node-express-puppeteer-pdf-example](https://github.com/christopher-talke/node-express-puppeteer-pdf-example) with minor tweaks.
+
+## Setup
 
 ```bash
+# Clone this repo to local workspace
 git clone https://github.com/awesome-fc/custom-container-docs.git
 cd custom-container-docs/puppeteer-pdf
-```
 
-### Option 1: Build and push using Docker only
+# Set FC_DEMO_IMAGE to your desired ACR image name,
+# e.g., registry.cn-shanghai.aliyuncs.com/{your-namespace}/puppeteer-pdf:v1
+export FC_DEMO_IMAGE={your_image_name}
 
-```bash
-# Set FC_DEMO_IMAGE to your image in ACR, e.g. registry-vpc.cn-beijing.aliyuncs.com/{your-namespace}/fc-demo-puppeteer-pdf:v1
-export FC_DEMO_IMAGE={your_image}
+# Set FC_ACCOUNT to your Alibaba Cloud Account ID
+export FC_ACCOUNT={your_account_id}
 
-# Build the image
+# Set region to the same as of your image, e.g., cn-shanghai
+export region={region}
+
+# Build image
 docker build -t $FC_DEMO_IMAGE .
 
-# Docker login before pushing, replace {your-ACR-registry}, e.g. registry.cn-beijing.aliyuncs.com
-docker login {your-ACR-registry}
-
-# Push the image
-docker push $FC_DEMO_IMAGE
-
-# Local test
-docker run --rm -p 3000:3000 $FC_DEMO_IMAGE
-curl http://localhost:3000/generate-pdf?url=http://example.com -o /tmp/fc-demo-puppeteer-pdf.pdf
-
-# Deploy the image with Alibaba Cloud FC console or Funcraft command line tool
-fun deploy
-```
-
-### Option 2 (Recommended): build and deploy using Funcraft
-```bash
-
-# Set FC_DEMO_IMAGE to your image in ACR, e.g. registry-vpc.cn-beijing.aliyuncs.com/{your-namespace}/fc-demo-puppeteer-pdf:v1
-export FC_DEMO_IMAGE={your_image}
-
-# Substitute {FC_DEMO_IMAGE} in template.yml
+# Substitute {FC_DEMO_IMAGE} and {FC_ACCOUNT} in s.yaml
 ./setup.sh
 
-# Configure funcraft, make sure the container registry and fun are in the same region, skip this step if fun is already configured.
-fun config
-
-# Build the Docker image
-fun build --use-docker
-
-# Deploy the function, push the image via the internet registry host (the function config uses the VPC registry for faster image pulling)
-fun deploy --push-registry acr-internet
+# Before deploying, Docker login to your ACR registry, e.g., registry.cn-shanghai.aliyuncs.com
+docker login registry.${region}.aliyuncs.com
 ```
 
-## Testing the acceleration
-After a successful deploy, make a http request to print a web page to a PDF
+## Deploy
+### Option 1 (Recommended): Build and deploy only using Serverless Devs
 
 ```bash
-export ACCOUNT_ID={your-account-id}
-export REGION={region} # e.g. cn-beijing
+# Deploying FC function automatically pushes image to your ACR repository
+s deploy
+```
 
-# Invoke WITHOUT image acceleration
-time curl -H "x-fc-invocation-target: 2016-08-15/proxy/CustomContainerDemo/puppeteer-pdf-no-accl" https://$ACCOUNT_ID.$REGION.fc.aliyuncs.com/generate-pdf?url=http://example.com -o /tmp/fc-demo-puppeteer-pdf-no-accl.pdf
+### Option 2: Push image to ACR before deploying
 
-# Invoke WITH image acceleration
-time curl -H "x-fc-invocation-target: 2016-08-15/proxy/CustomContainerDemo/puppeteer-pdf-accl" https://$ACCOUNT_ID.$REGION.fc.aliyuncs.com/generate-pdf?url=http://example.com -o /tmp/fc-demo-puppeteer-pdf-accl.pdf
+```bash
+# Push to your ACR repository
+docker push $FC_DEMO_IMAGE
 
-# Acceleration disabled: 66.5s vs. Acceleration enabled: 15.2s, cold start performance improved by 77.1%.
+# Deploy FC function
+s deploy --skip-push
+
+```
+
+## Before testing, wait until acceleration image is ready (Usually less than 5 minutes)
+
+```bash
+s cli fc-api getFunction --serviceName PuppeteerPDFCustomContainer --functionName puppeteer-pdf --region ${region}
+```
+
+### Expected response
+```yaml
+...
+CustomContainerConfig:
+    ...
+    # Make sure accelerationInfo.status is Ready
+    accelerationInfo:
+        status: Ready
+        ...
+```
+
+
+## Test with example.com
+
+```bash
+curl -X POST https://${FC_ACCOUNT}.${region}.fc.aliyuncs.com/invoke -H "x-fc-invocation-target: 2016-08-15/proxy/PuppeteerPDFCustomContainer/puppeteer-pdf"  -o /tmp/puppeteer-pdf-invoke.pdf
+
+# Open generated PDF
+open /tmp/puppeteer-pdf-invoke.pdf
+```
+
+## Test with official custom-container document
+
+``` bash
+curl 'https://'${FC_ACCOUNT}'.'${region}'.fc.aliyuncs.com/generate-pdf?url=https://help.aliyun.com/document_detail/179368.html' -H "x-fc-invocation-target: 2016-08-15/proxy/PuppeteerPDFCustomContainer/puppeteer-pdf"  -o /tmp/puppeteer-pdf-aliyun.pdf
+
+# Open generated PDF
+open /tmp/puppeteer-pdf-aliyun.pdf
 ```

@@ -1,79 +1,84 @@
-# Running custom containers on Function Compute
-Clone the repo to local workspace
+# A ThinkPHP (top-think) web application running on FC with custom-container runtime
+
+## Setup
 
 ```bash
+# Clone this repo to local workspace
 git clone https://github.com/awesome-fc/custom-container-docs.git
 cd custom-container-docs/php-topthink
-```
 
-## Create a ThinkPHP project
-```bash
-# Create a topthink/think project locally under php-topthink/
+# Create a topthink/think project locally
 composer create-project topthink/think thinkproject
-````
 
-## Option 1: Build and push using Docker only
+# Set FC_DEMO_IMAGE to your desired ACR image name,
+# e.g., registry.cn-shanghai.aliyuncs.com/{your-namespace}/php-topthink:v1
+export FC_DEMO_IMAGE={your_image_name}
 
-```bash
-export FC_DEMO_IMAGE="your ACR image name"  # e.g. registry.cn-shanghai.aliyuncs.com/namespace/thinkphp:tag
+# Set FC_ACCOUNT to your Alibaba Cloud Account ID
+export FC_ACCOUNT={your_account_id}
+
+# Set region to the same as of your image, e.g., cn-shanghai
+export region={region}
+
+# Build image
 docker build -t $FC_DEMO_IMAGE .
 
-# Docker login before pushing, replace {your-ACR-registry}, e.g. registry.cn-shanghai.aliyuncs.com
-docker login {your-ACR-registry}
-
-docker push $FC_DEMO_IMAGE
-
-# Configure FC using console or command line tool
-```
-
-## Option 2 (Recommended): Build and deploy using Funcraft
-
-```bash
-# Set FC_DEMO_IMAGE to your ACR image, e.g. registry-vpc.cn-shanghai.aliyuncs.com/{your-namespace}/thinkphp:v1
-export FC_DEMO_IMAGE={your_image}
-
-# Substitute {FC_DEMO_IMAGE} in template.yml
+# Substitute {FC_DEMO_IMAGE} and {FC_ACCOUNT} in s.yaml
 ./setup.sh
 
-# Build the Docker image
-fun build --use-docker
-
-# Docker login before pushing, replace {your-ACR-registry} with, e.g. registry.cn-shanghai.aliyuncs.com
-docker login {your-ACR-registry}
-
-# Deploy the function, push the image via the internet registry host (the function config uses the VPC registry for faster image pulling)
-fun deploy --push-registry acr-internet
-
-# After a successful deploy, fun should return a HTTP proxy URL to invoke the function
-curl https://{your-account-id}.{region}.fc.aliyuncs.com -H "x-fc-invocation-target: 2016-08-15/proxy/ThinkPHPCustomContainer/thinkphp-http"
-curl -X POST  https://1573869909382650.cn-shanghai.fc.aliyuncs.com/header/host -H "x-fc-invocation-target: 2016-08-15/proxy/ThinkPHPCustomContainer/thinkphp-http"
+# Before deploying, Docker login to your ACR registry, e.g., registry.cn-shanghai.aliyuncs.com
+docker login registry.${region}.aliyuncs.com
 ```
 
-## Developing with source code or adding dependencies
-* Check and modify server.go
-
-## Local development and debugging
-This demo can run locally using docker to test both HTTP and Event functions.
-
-### Event functions
+## Deploy
+### Option 1 (Recommended): Build and deploy only using Serverless Devs
 
 ```bash
-# Run the image, make sure FC_DEMO_IMAGE is already set, e.g. registry.cn-shanghai.aliyuncs.com/namespace/thinkphp:tag
-docker run -p 9000:9000 $FC_DEMO_IMAGE
-
-# Invoke handler
-curl -X POST -H "x-fc-request-id: test-request-1" localhost:9000/invoke
-
-# Initializer handler
-curl -X POST -H "x-fc-request-id: test-request-1" localhost:9000/initialize
+# Deploying FC function automatically pushes image to your ACR repository
+s deploy
 ```
 
-### HTTP functions
+### Option 2: Push image to ACR before deploying
 
 ```bash
-# Run the image, make sure FC_DEMO_IMAGE is already set, e.g. registry.cn-shanghai.aliyuncs.com/namespace/thinkphp:tag
-docker run -p 9000:9000 $FC_DEMO_IMAGE
+# Push to your ACR repository
+docker push $FC_DEMO_IMAGE
 
-curl localhost:9000/
-curl -X POST localhost:9000/
+# Deploy FC function
+s deploy --skip-push
+
+```
+
+## Before testing, wait until acceleration image is ready (Usually less than 1 min)
+
+```bash
+s cli fc-api getFunction --serviceName PHPTopthinkCustomContainer --functionName php-topthink --region ${region}
+```
+
+### Expected response
+```yaml
+...
+CustomContainerConfig:
+    ...
+    # Make sure accelerationInfo.status is Ready
+    accelerationInfo:
+        status: Ready
+        ...
+```
+
+
+## Test HTTP Trigger
+
+```bash
+curl https://${FC_ACCOUNT}.${region}.fc.aliyuncs.com -H "x-fc-invocation-target: 2016-08-15/proxy/PHPTopthinkCustomContainer/php-topthink"
+
+curl -X POST  https://${FC_ACCOUNT}.${region}.fc.aliyuncs.com/header/host -H "x-fc-invocation-target: 2016-08-15/proxy/PHPTopthinkCustomContainer/php-topthink"
+```
+
+## Test Event Function
+
+``` bash
+curl -X POST https://${FC_ACCOUNT}.${region}.fc.aliyuncs.com/initialize -H "x-fc-invocation-target: 2016-08-15/proxy/PHPTopthinkCustomContainer/php-topthink"
+
+curl -X POST https://${FC_ACCOUNT}.${region}.fc.aliyuncs.com/invoke -H "x-fc-invocation-target: 2016-08-15/proxy/PHPTopthinkCustomContainer/php-topthink"
 ```

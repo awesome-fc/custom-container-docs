@@ -30,7 +30,7 @@ def invoke():
     print("FC Invoke End RequestId: " + request_id)
     return "Hello from FC event function, your input: " + event_str + ", request_id: " + request_id + "\n"
 
-@app.route('/2016-08-15/proxy/CustomContainerDemo/python-flask-http/', methods = ['POST','GET'])
+@app.route('/', methods = ['POST','GET'])
 def http_invoke():
     # See FC docs for all the HTTP headers: https://www.alibabacloud.com/help/doc-detail/132044.htm#common-headers
     request_id = request.headers.get("x-fc-request-id", "")
